@@ -1,0 +1,43 @@
+<html>
+<head>
+	<style type="text/css">
+	.circle {
+		border-radius : 50%;
+		height: 20px;
+		width: 20px;
+		background: blue;
+	}
+	</style>
+	<script src="http://code.jquery.com/jquery-latest.js">
+	</script>
+</head>
+<body>
+
+	<script>
+	var numCircles = 5, 
+		numChanges = 2, 
+		changeInterval = 2000,
+		rand,
+		changes = [];
+	function makeRed () {
+		do{
+			var rand = Math.floor(Math.random() * 6).toString()
+		} while (changes.lastIndexOf(rand) != -1);
+		changes.push(rand);
+		$('#circle' + rand).css("background", "red");
+	};
+	function start() {
+		for (i=0; i<numCircles; i++){
+			$("body").append("<div class='circle' id=circle" + i.toString() + "></div>");
+		};
+	};
+	function clear() {
+		clearInterval(r);
+	}
+	start();
+	var r = setInterval(makeRed, changeInterval);
+	setTimeout(clear, (numChanges+.5)*changeInterval);
+	</script>
+
+</body>
+</html>
