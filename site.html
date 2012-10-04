@@ -33,31 +33,62 @@
 		numChanges = 15, 
 		changeInterval = 500,
 		timeStep = 0,
-		rand,
-		changes = [];
-	function makeRed () {
-		do{
-			rand = Math.floor(Math.random() * numCircles).toString()
-		} while (changes.lastIndexOf(rand) != -1);
-		timeStep++;
-		changes.push(rand);
-		console.log(rand);
-		$('#circle' + rand).css("background", "red").html('t=' + timeStep);
+		boxSize = 400,
+		changes = [],
+		houses = [];
+
+	var House = function (houseNum) {
+		this.houseNum = houseNum;
+		this.htmlId = 'circle' + houseNum;
+		this.x = Math.floor(Math.random()*boxSize + 20);
+		this.y = Math.floor(Math.random()*boxSize + 20);
+		this.infected = false;
+
+		this.display = function () {
+			$("body").append("<div class='circle' id=" + this.htmlId + "></div>");
+			$("#"+this.htmlId).css({top: this.y, left: this.x});
+			houses.push(this);
+		};
+
+		this.infect = function(timeStep) {
+			if (!this.infected) {
+				$('#' + this.htmlId).css("background", "red").html('t=' + timeStep);
+				changes.push(this.houseNum);
+				this.infected = true;
+			}
+		};
+		
 	};
+
+	function infectRandom () {
+		var rand;
+		do{
+			rand = Math.floor(Math.random() * numCircles)
+		} while (changes.lastIndexOf(rand) != -1);
+		house = houses[rand];
+		house.infect(timeStep);
+		timeStep++;
+	};
+
 	function start() {
-		var circle;
+		var house;
 		for (i=0; i<numCircles; i++){
-			circle = "circle" + i.toString();
-			$("body").append("<div class='circle' id=" + circle + "></div>");
-			$("#"+circle).css({top: Math.floor(Math.random()*400 + 20), left: Math.floor(Math.random()*400) + 20});
+			house = new House(i);
+			house.display();
 		};
 	};
+
 	function clear() {
 		clearInterval(r);
 	}
+
+	//where we actually start doing stuff
 	start();
-	var r = setInterval(makeRed, changeInterval);
+
+	var r = setInterval(infectRandom, changeInterval);
 	setTimeout(clear, (numChanges+.5)*changeInterval);
+
+
 	</script>
 
 	<div class='box'></div>
