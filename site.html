@@ -44,6 +44,7 @@
 		this.y = Math.floor(Math.random()*boxSize + 20);
 		this.infected = false;
 
+		//add the house to the html
 		this.display = function () {
 			$("body").append("<div class='circle' id=" + this.htmlId + "></div>");
 			$("#"+this.htmlId).css({top: this.y, left: this.x});
@@ -57,9 +58,18 @@
 				this.infected = true;
 			}
 		};
+
+		//is this house within some distance of another house?
+		this.near = function(otherHouse, threshold) {
+			xDiff = Math.abs(this.x - otherHouse.x);
+			yDiff = Math.abs(this.y - otherHouse.y);
+			distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+			return distance <= threshold;
+		};
 		
 	};
 
+	//infect a random house
 	function infectRandom () {
 		var rand;
 		do{
@@ -70,6 +80,7 @@
 		timeStep++;
 	};
 
+	//make houses, display them
 	function start() {
 		var house;
 		for (i=0; i<numCircles; i++){
