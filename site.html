@@ -15,6 +15,7 @@
     	-o-transition: background 1s ease;
     	transition: background 1s ease;
 	}
+
 	.box {
 		width:400px;
 		padding:20px;
@@ -22,11 +23,26 @@
 		border:7px solid gray;
 		margin:0px;
 	}
+
+	.draggable { 
+    	width: 40px; 
+    	height: 40px; 
+    	padding: 0.5em; 
+    	float: left; 
+    	margin: 0 10px 10px 0; 
+    	background-color: yellow;
+	}​
 	</style>
-	<script src="http://code.jquery.com/jquery-latest.js">
-	</script>
+
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script src="http://code.jquery.com/ui/1.8.24/jquery-ui.min.js"></script>
+
 </head>
 <body>
+
+	<!--<div class='draggable' id='dragme'><img src=vaccine.jpg>vaccine</div>-->
+	<div class='draggable' id='dragme'>vaccine</div>
+	<div class='box'></div>
 
 	<script>
 	var numCircles = 30, 
@@ -66,7 +82,6 @@
 			distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 			return distance <= threshold;
 		};
-		
 	};
 
 	//infect a random house
@@ -81,7 +96,7 @@
 	};
 
 	//make houses, display them
-	function start() {
+	function generateHouses() {
 		var house;
 		for (i=0; i<numCircles; i++){
 			house = new House(i);
@@ -91,18 +106,16 @@
 
 	function clear() {
 		clearInterval(r);
-	}
+	};
 
 	//where we actually start doing stuff
-	start();
+	generateHouses();
 
 	var r = setInterval(infectRandom, changeInterval);
 	setTimeout(clear, (numChanges+.5)*changeInterval);
-
+	$('#dragme').draggable();
 
 	</script>
-
-	<div class='box'></div>
 
 </body>
 </html>
