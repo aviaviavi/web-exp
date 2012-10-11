@@ -76,11 +76,11 @@
 		};
 
 		//is this house within some distance of another house?
-		this.near = function(otherHouse, threshold) {
+		this.distanceTo = function(otherHouse) {
 			xDiff = Math.abs(this.x - otherHouse.x);
 			yDiff = Math.abs(this.y - otherHouse.y);
 			distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
-			return distance <= threshold;
+			return distance;
 		};
 	};
 
