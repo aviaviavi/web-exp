@@ -37,7 +37,7 @@
 		changes = [],
 		houses = [],
 	 	vacAreas = 0,
-		flags = 0;
+		numFlags = 0;
 
 	//button setup
 	$(function() {
@@ -46,6 +46,17 @@
             icons: {
                 primary: 'ui-icon-flag'
             }
+        }).click(function() {
+        	$("#flag").buttonset();
+        	$("#area").click(function (e) {
+        		var flagId = "flag" + numFlags.toString();
+        		$("#area").append("<div id=" + flagId +"><img src='icons/59-flag.png'</div>" )
+        		$("#" + flagId).css({position:'absolute', top: e.pageY - 26, left: e.pageX});
+        		numFlags++;
+        		$("#area").unbind('click');
+        		$("#flag").removeAttr("checked");
+        		$("#flag").button("refresh");
+        	})
         });
         $( "#vaccinate" ).button({
             text: false,
@@ -131,8 +142,8 @@
 
 
 	<span id="toolbar" class="ui-widget-header ui-corner-all">
-    <button id="flag">flag a contaminated area</button>
-    <button id="vaccinate">vaccinate an area</button>
+    <input type="checkbox" id="flag" /> <label for="flag"> Flag a contaminated area </label>
+    <button id="vaccinate">Vaccinate an area</button>
 	</span>
 
 	<script>
