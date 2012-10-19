@@ -63,6 +63,9 @@
 		} for (i = 0; i < vacAreas; i++) {
 			id = "#vaccine" + i;
 			$(id).unbind('click');
+		} for (i = 0; i < numFlags; i++) {
+			id = "#flag" + i;
+			$(id).unbind('click');
 		}
 	};
 
@@ -76,6 +79,10 @@
         }).click(function() {
         	if ($("#flag").attr("checked")) {
 	        	$("#flag").buttonset();
+	        	//fix delete button
+	        	$("#delete").removeAttr("checked");
+	        	$("#delete").button("refresh");   
+	        	unbindAll();
 	        	//make the box flaggable
 	        	$("#area").click(function (e) {
 	        		var flagId = "flag" + numFlags.toString();
@@ -118,13 +125,13 @@
 		        		$("#help").text('Help Box');
 		        	})
 	        	}
+	        	$("#help").text("Click within the box to place a flag on a area to mark it as contaminated. Click on the flag icon again to cancel.");
 	        } else {
 	        	unbindAll();
 	        	$("#flag").removeAttr("checked");
 	        	$("#flag").button("refresh");
 	        	$("#help").text('Help Box');
 	        }
-	        $("#help").text("Click within the box to place a flag on a area to mark it as contaminated. Click on the flag icon again to cancel.");
         });
         $( "#vaccinate" ).button({
             text: false,
@@ -141,20 +148,68 @@
         	vacAreas++;
         	$("#help").text("You've created a vaccination area! Drag and resize the box over the area you wish to vaccinate.");
         });
+        //delete button
+        $( "#delete").button({
+        	text: false,
+        	icons: {
+        		primary: "ui-icon-trash"
+        	}
+        }).click(function() {
+        	unbindAll();
+        	if ($("#delete").attr("checked")) {
+				$("#help").text("click a flag or vaccine to delete it. click the delete button once more to cancel.")
+				$("#delete").buttonset();
+        		$("#flag").removeAttr("checked");
+        		$("#flag").button("refresh");
+        		var id;
+        		for (i = 0; i < numFlags; i++) {
+        			id = "#flag" + i;
+        			$(id).click(function () {
+		        		unbindAll();
+		        		$(this).effect('explode', 500);
+        				$(this).remove();
+        				$("#delete").removeAttr("checked")
+		        			.button("refresh")
+		        		//numFlags--;
+		        			.removeAttr("checked")
+		        			.button("refresh");
+		        		$("#help").text("Help Box")
+        			})
+        		} for (j = 0; j < vacAreas; j++) {
+        			id = "#vaccine" + j;
+        			$(id).click(function () {
+		        		unbindAll();
+		        		$(this).effect('explode', 500);
+        				$(this).remove();
+        				$("#delete").removeAttr("checked")
+		        			.button("refresh")
+		        		//vacAreas--;
+		        			.removeAttr("checked")
+		        			.button("refresh");
+		        		$("#help").text("Help Box");
+        			})
+        		}
+        	} else {
+        		unbindAll();
+        		$("#delete").removeAttr("checked");
+        		$("#delete").button("refresh");
+        		$("#help").text("Help Box")
+        	}
+        })
     });
 
 	//main house data structure
 	var House = function (houseNum) {
 		this.houseNum = houseNum;
 		this.htmlId = 'house' + houseNum;
-		this.x = Math.floor(Math.random()*(boxSize - 22) + 10);
-		this.y = Math.floor(Math.random()*(boxSize - 22) + 10);
+		this.x = Math.floor(Math.random()*(boxSize - 22) + 21);
+		this.y = Math.floor(Math.random()*(boxSize - 22) + 21);
 		this.infected = false;
 
 		//add the house to the html
 		this.display = function () {
 			$("body").append("<div class='house' id=" + this.htmlId + "><img id=" + this.htmlId + "img src=icons/53-house.png></div>");
-			$("#"+this.htmlId).css({top: this.y, left: this.x});
+			$("#"+this.htmlId).css({top: this.y - 11, left: this.x - 11});
 			houses.push(this);
 		};
 
@@ -214,8 +269,9 @@
 
 	<div>
 	<span id="toolbar" class="ui-widget-header ui-corner-all">
-    <input type="checkbox" id="flag" /> <label for="flag"> Flag a contaminated area </label>
     <button id="vaccinate">Vaccinate an area</button>
+    <input type="checkbox" id="flag"/> <label for="flag"> Flag a contaminated area </label>
+    <input type="checkbox" id="delete"/> <label for="delete"> Delete a flag or vaccine </label>
 	</span>
 	</div>
 
