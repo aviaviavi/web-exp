@@ -17,11 +17,12 @@
 
 	.helperbox {
 		width:200px;
-		height: 404px;
+		height: 396px;
 		background: #dddddd;
 		display: inline-block;
 		float:left;
 		border-radius: 7px;
+		padding: 4px;
 	}
 
 	.draggable { 
@@ -55,20 +56,13 @@
 
 	<div>
 	<span id="toolbar" class="ui-widget-header ui-corner-all" style="margin: 150px">
+    <button id="start">Begin simulation</button>
     <button id="vaccinate">Vaccinate an area</button>
-    <input type="checkbox" id="flag"/> <label for="flag"> Flag a contaminated area </label>
-    <input type="checkbox" id="delete"/> <label for="delete"> Delete a flag or vaccine </label>
+    <input type="checkbox" id="flag"/> <label for="flag">Flag a contaminated area</label>
+    <input type="checkbox" id="delete"/> <label for="delete">Delete a flag or vaccine</label>
 	</span>
+    <input type="checkbox" id="display_all"/> <lab for="display_all">Show all houses</label>
 	</div>
-
-	<script>
-
-	generateHouses();
-
-	var r = setInterval(infectRandom, changeInterval);
-	setTimeout(clear, (numChanges+.5)*changeInterval);
-
-	</script>
 
 </body>
 </html>

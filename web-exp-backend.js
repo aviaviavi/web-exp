@@ -6,7 +6,8 @@ var numHouses = 30,
 	changes = [],
 	houses = [],
  	vacAreas = 0,
-	numFlags = 0;
+	numFlags = 0,
+	clearFunction;
 
 //unbind all button click events after flag is placed
 var unbindAll = function() {
@@ -103,6 +104,9 @@ $(function() {
         	.css({"background": 'rgb('+ (255 - (vacAreas*50)) +',255,0)'});
     	vacAreas++;
     	$("#help").text("You've created a vaccination area! Drag and resize the box over the area you wish to vaccinate.");
+    	$("#delete").removeAttr("checked")
+	        .button("refresh");   
+        unbindAll();
     });
     //delete button
     $( "#delete").button({
@@ -153,7 +157,14 @@ $(function() {
     			.button("refresh");
     		$("#help").text("Help Box");
     	}
-    })
+    });
+	//start simulation button
+	$("#start").button({
+			text: false,
+			icons: {
+				primary: "ui-icon-play"
+			}
+		}).click(function () {start();});
 });
 
 //main house data structure
@@ -166,7 +177,8 @@ var House = function (houseNum) {
 
 	//add the house to the html
 	this.display = function () {
-		$("body").append("<div class='house' id=" + this.htmlId + "><img id=" + this.htmlId + "img src=icons/53-house.png></div>");
+		var style = $("#display_all").attr("checked") ? "" : " style='display: none'";
+		$("body").append("<div class='house' id=" + this.htmlId + "><img id=" + this.htmlId + "img src=icons/53-house.png" + style + "></div>");
 		$("#"+this.htmlId).css({top: this.y - 11, left: this.x - 11});
 		houses.push(this);
 	};
@@ -211,6 +223,16 @@ function generateHouses() {
 	};
 };
 
+//simply clear the infect random function. feed in r to set interval in html, call clear()
+//to clear it.
 function clear() {
-	clearInterval(r);
+	clearInterval(clearFunction);
+};
+
+function start() {
+	generateHouses();
+	clearFunction = setInterval(infectRandom, changeInterval);
+	setTimeout(clear, (numChanges+.5)*changeInterval);
+	$("#start").unbind("click");
+	$("#display_all").unbind("click");
 };
