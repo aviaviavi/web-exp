@@ -160,11 +160,11 @@ $(function() {
     });
 	//start simulation button
 	$("#start").button({
-			text: false,
-			icons: {
-				primary: "ui-icon-play"
-			}
-		}).click(function () {start();});
+		text: false,
+		icons: {
+			primary: "ui-icon-play"
+		}
+	}).click(function () {start();});
 });
 
 //main house data structure
@@ -235,4 +235,5 @@ function start() {
 	setTimeout(clear, (numChanges+.5)*changeInterval);
 	$("#start").unbind("click");
 	$("#display_all").unbind("click");
+	$("#help").text("Simulating... Mark areas as contaminated or deploy vaccines.")
 };
