@@ -1,4 +1,4 @@
-var timeScale = 1000000000.0
+var timeScale = 10000.0
 //single variable, homogenous 
 function generatePoisson(lambda, maxTime) {
 	var output = [],
