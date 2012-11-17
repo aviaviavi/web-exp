@@ -9,6 +9,13 @@ var numHouses = 30,
 	numFlags = 0,
 	clearFunction;
 
+var timeScale = 10000.0,
+	distances,
+	t_lambda_n = [],
+	t_lambda_p = [],
+	lambda_0 = .1
+	numHouses = 15;
+
 //unbind all button click events after flag is placed
 var unbindAll = function() {
 	$("#area").unbind('click');
@@ -231,9 +238,137 @@ function clear() {
 
 function start() {
 	generateHouses();
-	clearFunction = setInterval(infectRandom, changeInterval);
-	setTimeout(clear, (numChanges+.5)*changeInterval);
+	poissonCascade(numChanges, .1);
 	$("#start").unbind("click");
 	$("#display_all").unbind("click");
 	$("#help").text("Simulating... Mark areas as contaminated or deploy vaccines.")
 };
+
+
+function generatePoisson(lambda, maxEvents) {
+	var output = [],
+	rand;
+	for (i = 0; i < maxEvents; i++) {
+		rand = Math.random();
+		if (rand < lambda/timeScale) {
+			output.push(i/timeScale);
+		}
+	}
+}
+
+//single variable, general nonhomogenous, lambda must be a function
+function poissonNH(lambda, maxEvents, t) {
+	var output = [],
+	rand;
+	for (i = t; output.length < maxEvents; i++) {
+		rand = Math.random();
+		if (rand < lambda(i, 5)) {
+			output.push(i);
+
+		}
+	} return output;
+}
+
+function lambdaExpDecay(currentTime, length) {
+		return length / currentTime;
+}
+
+function poissonCascade(maxEvents, lambda_0) {
+	var T_lambda_n = [];
+	//array with [t of Event, lambda_x]
+	var nextEvent;
+	//push to output for now, yield in python
+	var output = [];
+	var t = 0;
+	var house;
+
+	//generate lambda zero p.p., pick a random house for it to infect
+	T_lambda_n[0] = generatePoisson(lambda_0, maxEvents);
+	houseNum = Math.floor(Math.random() * numHouses);
+	houses[houseNum-1].infect(t);
+
+	while (output.length < maxEvents) {
+
+		//add a new process to t_lambda_n
+		T_lambda_n[houseNum] = poissonNH(lambdaExpDecay, maxEvents - output.length, t);
+
+		//get the next event
+		nextEvent = findEvent(T_lambda_n.map(min), t);
+		// thinning check, have code to generate thinning perams
+		// for (thinPeram in thinningPerams) {
+		// 	thinningVal += thinningPeram
+		// }
+		// if (Math.random() > thinningVal )
+		output.push(nextEvent[0]);
+		//figure out which house will be infected
+
+		for (i = 0; i < numHouses; i++) {
+			distances = [];
+			if (!houses[i].infected && i != houseNum) {
+				distances[i] = houses[numHouses-1].distanceTo(houses[i]);
+			}
+		}
+
+		for (index = 0; index < numHouses; index++) {
+			if (Math.random() < 1/Math.pow(distances[index], 2)) {
+				houseNum = index;
+				houses[houseNum].infect();
+				break;
+			}
+		}
+		
+		t++;
+	}
+
+	return output;
+}
+
+function infectPoisson(t) {
+	var houseNum,
+		nextEvent;
+	if (t_lambda_n.length === 0) {
+		//generate base process
+		t_lambda_n[0] = generatePoisson(lambda_0, numChanges);
+		houseNum = Math.floor(Math.random() * numHouses);
+		houses[houseNum-1].infect(0);
+	} else {
+		nextEvent = findEvent(t_lambda_n, t);
+		//select house number
+		for (i = 0; i < numHouses; i++) {
+			distances = [];
+			if (!houses[i].infected && i != houseNum) {
+				distances[i] = houses[numHouses-1].distanceTo(houses[i]);
+			}
+		}
+		for (index = 0; index < numHouses; index++) {
+			if (Math.random() < 1/Math.pow(distances[index], 2)) {
+				houseNum = index;
+				houses[houseNum].infect();
+				break;
+			}
+		}
+
+		houses[houseNum-1].infect();
+		t_lambda_n[houseNum-1].push(poissonNH(lambdaExpDecay, numChanges-changes.length,t));
+		t_lambda_p.push(nextEvent[0]);
+	}
+}
+
+function findEvent(array, t) {
+	var low = array[0];
+	var lowIndex;
+	for (i = 1; i < array.length; i++) {
+		if (array[i] === undefined) {continue;}
+		if (array[i] < low && array[i] > t) low = array[i]; lowIndex = i
+	} return [low, lowIndex];
+}	
+
+function min(array) {
+	if (array === undefined) {return array;}
+	var low = array[0];
+	for (i = 0; i < array.length; i++) {
+		//if (array[i] === undefined) {continue;}
+		if (array[i] < low) low = array[i];
+	} return low;
+}
+
