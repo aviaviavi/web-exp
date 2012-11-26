@@ -1,0 +1,40 @@
+#generate t_lambda_n, a set of poisson processes.
+
+t = 0
+
+output = []
+
+generate events for t_lambda_0, a homogenous pp w/ rate lambda_0
+
+for i in [1, max_infections]:
+	select the min event e > t from all of t_lambda_n
+	t = e
+	output.append(t)
+	generate events for a new poisson process starting at t (non homogoenous, exponential decay)
+	append it to t_lambda_n
+return output
+
+
+
+#select houses to infect
+
+events = output of previous function
+last_infected = select a random house
+
+last_infected.infect()
+
+for event in events[1:]:
+	distances = [sorted list (ascending) of distances of each house from last_infected]
+	for distance d in distances:
+		infect house at distance d with probability 1/d^2
+		if house at d was infected:
+			last_infected = house at d
+			break
+
+
+#for selecting which house to infect, right now i doing it from the distance of the last infected house.
+#however, im not sure if i should do this, or infect probablisticly from the house who's poisson process 
+#the current event was taken from
+
+
+
