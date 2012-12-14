@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" />
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script src="http://code.jquery.com/ui/1.8.24/jquery-ui.min.js"></script>
+	<script>
+    $(function() {
+        $( "#slider" ).slider({min:0, max:100, value:0, width:200, slide: function( event, ui ) {
+                $( "#slider" ).val( ui.value );
+            }, stop: function(event, ui) {
+            	document.getElementById("confidence").innerHTML = "Confidence = " + this.value
+            } });
+    });
+
+    var submit = function() {console.log("submit " + document.getElementById("slider").value);}
+    </script>
+	<h1 style="text-align:center">
+		Causal Responses
+	</h1>
+</head>
+<body>
+	<div align="center">
+		<p>How confident are you that the disease you were just shown is contagious?</p>
+		<p id="confidence">Confidence = 0</p>
+		<div id="slider" style="width:200px"></div>
+		<button type="button" onclick="submit()">Submit</button>
+</html>
