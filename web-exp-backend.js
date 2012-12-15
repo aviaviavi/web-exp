@@ -319,9 +319,18 @@ function poissonCascade(maxEvents, lambda_0) {
 	var t_lambda_n = [];
 	var lastInfected;
 	var index;
+	var rand;
 
 	//generate lambda zero p.p.
 	t_lambda_n.push(generatePoisson(lambda_0, maxEvents));
+
+	//generate order of infections for base process
+	for (i = 0; i < t_lambda_n[0].length; i++) {
+		do {
+			rand =  Math.floor(Math.random() * numHouses);
+		} while (infectionOrders[0].indexOf(rand) != -1);
+		infectionOrders[0].push(rand);
+	}
 
 	while (output.length < maxEvents) {
 		//get the next event, push it, update t
@@ -329,27 +338,15 @@ function poissonCascade(maxEvents, lambda_0) {
 		do {
 			nextEvent = findEvent(t_lambda_n, t);
 			t = nextEvent[0];
-
 			//assign lastInfected, push it to orderOutput
-			if (nextEvent[1] === 0) { // if the event was taken from t_lambda_0, just pick a random house to infect
-				do {
-					lastInfected = Math.floor(Math.random()*numHouses);
-				} while (infectionOrderOutput.indexOf(lastInfected) != -1);	
-			} else { 
-				index = t_lambda_n[nextEvent[1]].indexOf(t)
-				lastInfected = infectionOrders[nextEvent[1]][index];
-			}
+			index = t_lambda_n[nextEvent[1]].indexOf(t)
+			lastInfected = infectionOrders[nextEvent[1]][index];
 			if (infectionOrderOutput.indexOf(lastInfected) === -1) eventFound = true;
-
 		} while (!eventFound); //while the next event picked isn't infecting an already infected house
-
-
 		//thinning stuff would probably take place here
 		//just dont push the event unless it passes some random thinning check
 		output.push(t);
 		infectionOrderOutput.push(lastInfected);
-		 
-
 		//add a new process to t_lambda_n
 		t_lambda_p = poissonNH(lambdaExpDecay, numChanges, t);
 		t_lambda_n.push(t_lambda_p);
@@ -398,34 +395,26 @@ function findEvent(array, t) {
 }
 
 
-//then just walk through the houses in order and infect them w p = 1/d^2
-	// for (i = 0; i < times.length; i++) {
-	// 	//find all house distances
-	// 	for (houseNum = 0; houseNum < numHouses; houseNum++) {
-	// 		//console.log(houseNum);
-	// 		distance = lastInfected.distanceTo(houses[houseNum])
-	// 		distances[houseNum] = parseFloat(distance.toFixed(2));
-	// 	} 
-	// 	sortedDistances = distances;
-	// 	console.log(sortedDistances);
-	// 	sortedDistances.sort(sortFunction);
-	// 	console.log(sortedDistances);
-	// 	while (next === lastInfected) {
-	// 		for (d = 1; d < sortedDistances.length; d++) {
-	// 			rand = Math.random()
-	// 			if (rand < 1/Math.pow(sortedDistances[d], 2)) {
-	// 				rand = distances.indexOf(sortedDistances[d]);
-	// 				if (infections.indexOf(rand) === -1) {
-	// 					next = houses[rand];
-	// 					houseOrder.push(next);
-	// 					setTimeout(function() {index++; houseOrder[index].infect();}, times[i]*frameRate)
-	// 					infections.push(next.houseNum);
-	// 					//console.log('timeout set', next.houseNum, times[i]*frameRate);
-	// 				}
-	// 			}
-	// 		} 
-	// 	}
-	// 	lastInfected = next;
-	// 	test = distances;
-	// 	distances = [];
-	// }
+function checkTime(){
+  var l = eTimes[eTimesIndex].length;
+  var s = eTimes[eTimesIndex];
+  if(elapsed===dTimes[dTimesIndex]){
+  document.getElementById('indicator').src=onFigVal;
+  setTimeout("document.getElementById('indicator').src='indOff.jpg';",300);
+  dTimesIndex++;
+  }
+  for (var i=0;i<l;i++){
+  if(elapsed===s[i]){
+  indexHolder.push(lightOrderIndex);
+  light(lightOrder[lightOrderIndex]);
+  setTimeout("lightOff()",80);
+  if (i===0){eTimesIndex++;}
+  lightOrderIndex++;
+  }
+  }
+  if(elapsed>=max_time){
+  goTo('exp','interim1');
+  dsc.push(Math.round(100*tracker.sum()/tracker.length)/100);
+// alert(dsc);
+  }
+}
