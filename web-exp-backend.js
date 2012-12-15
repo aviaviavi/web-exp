@@ -10,11 +10,15 @@ var numHouses = 30,
 	frameRate = 1500,
 	clearFunction;
 
-var timeScale = 10.0,
-	cascadeLength = 5,
-	lambda_0 = .5;
+var timeScale = 200.0,
+	cascadeLength = 50,
+	lambda_0 = .2;
 
-var test = [];
+var events = [];
+var times;
+var infectOrder;
+//the fact that this is necessary is a huge flaw in js
+var iterator = 0;
 
 //unbind all button click events after flag is placed
 var unbindAll = function() {
@@ -190,7 +194,7 @@ var House = function (houseNum) {
 		houses.push(this);
 	};
 
-	this.infect = function() {
+	this.infect = function(time) {
 		if (!this.infected) {
 			$('#' + this.htmlId + "img").fadeOut(function() { 
 			  $(this).load(function() { $(this).fadeIn(); }); 
@@ -198,7 +202,8 @@ var House = function (houseNum) {
 			});
 			changes.push(this.houseNum);
 			this.infected = true;
-			//console.log('infected')
+			console.log("infecting");
+		//console.log('infected')
 		}
 	};
 
@@ -209,6 +214,7 @@ var House = function (houseNum) {
 		distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 		return distance;
 	};
+
 };
 
 //infect a random house
@@ -235,57 +241,13 @@ function sortFunction(a, b){
 	return (a - b) //causes an array to be sorted numerically and ascending
 }
 
-function infectIntervalProb (times) {
-	var distances = [],
-		infections = [],
-		houseOrder = [],
-		index = 0,
-		sortedDistances,
-		distance,
-		rand,
-		next,
-		lastInfected;
-
-	//first just infect a random house
-	next = lastInfected = houses[Math.floor(Math.random()*numHouses)];
-	setTimeout(function() {lastInfected.infect();}, times[0]*frameRate);
-	houseOrder.push(next.houseNum)
-	infections.push(lastInfected.houseNum);
-
-	//then just walk through the houses in order and infect them w p = 1/d^2
-	for (i = 0; i < times.length; i++) {
-		//find all house distances
-		for (houseNum = 0; houseNum < numHouses; houseNum++) {
-			//console.log(houseNum);
-			distance = lastInfected.distanceTo(houses[houseNum])
-			distances[houseNum] = parseFloat(distance.toFixed(2));
-		} 
-		sortedDistances = distances;
-		console.log(sortedDistances);
-		sortedDistances.sort(sortFunction);
-		console.log(sortedDistances);
-		while (next === lastInfected) {
-			for (d = 1; d < sortedDistances.length; d++) {
-				rand = Math.random()
-				if (rand < 1/Math.pow(sortedDistances[d], 2)) {
-					rand = distances.indexOf(sortedDistances[d]);
-					if (infections.indexOf(rand) === -1) {
-						next = houses[rand];
-						houseOrder.push(next);
-						setTimeout(function() {index++; houseOrder[index].infect();}, times[i]*frameRate)
-						infections.push(next.houseNum);
-						//console.log('timeout set', next.houseNum, times[i]*frameRate);
-					}
-				}
-			} 
-		}
-		lastInfected = next;
-		test = distances;
-		distances = [];
+function epidemic() {
+	// console.log(times.length === infectOrder.length);
+	// console.log("times = " + times);
+	// console.log("order = " + infectOrder);
+	for (i = 0 ; i < times.length; i++) {
+		setTimeout(function() {houses[infectOrder[iterator]].infect(times[iterator]); iterator++;}, timeScale * (times[i] - times[0]));
 	}
-
-
-
 }
 
 //make houses, display them
@@ -305,9 +267,11 @@ function clear() {
 
 function start() {
 	generateHouses();
-	var events = poissonCascade(numChanges, lambda_0);
-	console.log(events);
-	infectIntervalProb(events);
+	events = poissonCascade(numChanges, lambda_0);
+	times = events[0];
+	infectOrder = events[1];
+	console.log("times = " + times);
+	epidemic();
 	$("#start").unbind("click");
 	$("#display_all").unbind("click");
 	$("#help").text("Simulating... Mark areas as contaminated or deploy vaccines.")
@@ -329,10 +293,10 @@ function generatePoisson(lambda, maxEvents) {
 function poissonNH(lambda, maxEvents, t) {
 	var output = [],
 	rand;
-	for (i = t; (output.length < maxEvents && i - t < cascadeLength) ; i+=1/timeScale) {
+	for (i = t; (output.length < maxEvents && i - t < cascadeLength) ; i+=1) {
 		rand = Math.random();
 		if (rand < (lambda(i-t, cascadeLength))) {
-			output.push(i);
+			output.push(i/timeScale);
 
 		}
 	} return output;
@@ -347,30 +311,59 @@ function poissonCascade(maxEvents, lambda_0) {
 	var nextEvent;
 	//push to output for now, yield in python
 	var output = [];
+	var infectionOrderOutput = [];
+	var infectionOrders = [[]]; //first index left blank, so it lines up indices with t_lambda_n
 	var t = 0;
 	var house;
 	var t_lambda_p = [];
 	var t_lambda_n = [];
+	var lastInfected;
+	var index;
 
-	//generate lambda zero p.p., pick a random house for it to infect
+	//generate lambda zero p.p.
 	t_lambda_n.push(generatePoisson(lambda_0, maxEvents));
 
 	while (output.length < maxEvents) {
 		//get the next event, push it, update t
-		nextEvent = findEvent(t_lambda_n, t);
+		eventFound = false;
+		do {
+			nextEvent = findEvent(t_lambda_n, t);
+			t = nextEvent[0];
+
+			//assign lastInfected, push it to orderOutput
+			if (nextEvent[1] === 0) { // if the event was taken from t_lambda_0, just pick a random house to infect
+				do {
+					lastInfected = Math.floor(Math.random()*numHouses);
+				} while (infectionOrderOutput.indexOf(lastInfected) != -1);	
+			} else { 
+				index = t_lambda_n[nextEvent[1]].indexOf(t)
+				lastInfected = infectionOrders[nextEvent[1]][index];
+			}
+			if (infectionOrderOutput.indexOf(lastInfected) === -1) eventFound = true;
+
+		} while (!eventFound); //while the next event picked isn't infecting an already infected house
+
+
 		//thinning stuff would probably take place here
 		//just dont push the event unless it passes some random thinning check
-		output.push(nextEvent);
-		t = output[output.length - 1];
+		output.push(t);
+		infectionOrderOutput.push(lastInfected);
+		 
 
 		//add a new process to t_lambda_n
-		t_lambda_p = poissonNH(lambdaExpDecay, 20, t);
-
+		t_lambda_p = poissonNH(lambdaExpDecay, numChanges, t);
 		t_lambda_n.push(t_lambda_p);
-		//t_lambda_n.map(function(x) {console.log(x)});
+		//for (b = 0; b < t_lambda_n.length; b++) {console.log(t_lambda_n[b])}
+		//figure out house infection orders for this t_lambda_p
+		house = houses[lastInfected];
+		order = [];
+		for (houseNum = 0; order.length < numChanges; houseNum = (houseNum + 1) % numHouses) {
+			if (houseNum != lastInfected && Math.random() < 1/Math.pow(house.distanceTo(houses[houseNum]), 2) && order.indexOf(houseNum) === -1) {
+				order.push(houseNum);
+			}
+		} infectionOrders.push(order);
 	}
-
-	return output;
+	return [output, infectionOrderOutput];
 }
 
 //find the smallest event in 1d array after t
@@ -393,8 +386,46 @@ function min(array, t) {
 function findEvent(array, t) {
 	var next = min(array[0], t);
 	var low = next;
+	var index = 0;
 	for (i = 1; i < array.length; i++) {
 		next = min(array[i], t);
-		if (low > next) low = next;
-	} return low
+		if (low > next) {
+			low = next;
+			index = i;
+		} 
+	}
+	return [low, index]
 }
+
+
+//then just walk through the houses in order and infect them w p = 1/d^2
+	// for (i = 0; i < times.length; i++) {
+	// 	//find all house distances
+	// 	for (houseNum = 0; houseNum < numHouses; houseNum++) {
+	// 		//console.log(houseNum);
+	// 		distance = lastInfected.distanceTo(houses[houseNum])
+	// 		distances[houseNum] = parseFloat(distance.toFixed(2));
+	// 	} 
+	// 	sortedDistances = distances;
+	// 	console.log(sortedDistances);
+	// 	sortedDistances.sort(sortFunction);
+	// 	console.log(sortedDistances);
+	// 	while (next === lastInfected) {
+	// 		for (d = 1; d < sortedDistances.length; d++) {
+	// 			rand = Math.random()
+	// 			if (rand < 1/Math.pow(sortedDistances[d], 2)) {
+	// 				rand = distances.indexOf(sortedDistances[d]);
+	// 				if (infections.indexOf(rand) === -1) {
+	// 					next = houses[rand];
+	// 					houseOrder.push(next);
+	// 					setTimeout(function() {index++; houseOrder[index].infect();}, times[i]*frameRate)
+	// 					infections.push(next.houseNum);
+	// 					//console.log('timeout set', next.houseNum, times[i]*frameRate);
+	// 				}
+	// 			}
+	// 		} 
+	// 	}
+	// 	lastInfected = next;
+	// 	test = distances;
+	// 	distances = [];
+	// }
