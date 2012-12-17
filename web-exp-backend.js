@@ -15,8 +15,7 @@ var timeScale = 200.0,
 	lambda_0 = .2;
 
 var events = [];
-var times;
-var infectOrder;
+var benchmarkTime = 0;
 //the fact that this is necessary is a huge flaw in js
 var iterator = 0;
 
@@ -241,12 +240,15 @@ function sortFunction(a, b){
 	return (a - b) //causes an array to be sorted numerically and ascending
 }
 
-function epidemic() {
-	// console.log(times.length === infectOrder.length);
-	// console.log("times = " + times);
-	// console.log("order = " + infectOrder);
+//main simulation epidemic, 
+function epidemic(times, infectOrder) {
+		benchmarkTime = new Date().getTime();
 	for (i = 0 ; i < times.length; i++) {
-		setTimeout(function() {houses[infectOrder[iterator]].infect(times[iterator]); iterator++;}, timeScale * (times[i] - times[0]));
+		setTimeout(function() {
+			console.log(new Date().getTime() - benchmarkTime - times[0], timeScale * (times[iterator] - times[0]));
+			houses[infectOrder[iterator]].infect(times[iterator]); 
+			iterator++;}, 
+				timeScale * (times[i] - times[0]));
 	}
 }
 
@@ -271,7 +273,7 @@ function start() {
 	times = events[0];
 	infectOrder = events[1];
 	console.log("times = " + times);
-	epidemic();
+	epidemic(times, infectOrder);
 	$("#start").unbind("click");
 	$("#display_all").unbind("click");
 	$("#help").text("Simulating... Mark areas as contaminated or deploy vaccines.")

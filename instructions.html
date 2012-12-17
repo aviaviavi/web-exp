@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<h1 style="text-align:center">Instructions</h1>
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script src="http://code.jquery.com/ui/1.8.24/jquery-ui.min.js"></script>
+	<script type="text/javascript">
+		var enabled = true;
+		function next() {
+			window.location = "site.html";
+		}
+
+		function showExample() {
+			if (enabled) {
+				$("#example_house").fadeOut(function() {
+					$(this).attr("src", "icons/53-house-infected.png"); 
+					$(this).load(function() { $(this).fadeIn(); }); 
+				});
+				enabled = false;
+			}
+		}
+	</script>
+</head>
+<body>
+	<p>
+		Imagine you are a public health official trying to identify new contagious diseases. 
+		Some diseases are contagious and so can be transmitted from person to person, whereas others are genetic, 
+		and will not be transmitted person to person.
+
+		You will see a series of videos that represent the timecourse of various diseases in one city.
+
+		The whole map is the layout of the city, and each house represents where each family lives in the city. Initially 
+		all the houses are grey because as far as we know they are not sick.
+
+		(example picture of one of the maps)
+
+		If a house turns red, that means someone in that family became sick.
+	</br></br></br></br>
+	<div align="center">
+		<img id="example_house" src="icons/53-house.png">
+	</br></br> 
+		<button id="demo_button" type="button" onclick="showExample()">Infect!</button>
+	</br></br></br></br>
+	</div>
+
+		Your job is to watch each video and decide whether the disease in question is contagious or genetic. 
+		You will rate how confident you are on a scale from 0 to 100, where 0 means that you are confident the disease 
+		is not contagious, it is genetic and 100 means that you are confident that the disease is contagious, not genetic.</p>
+	</br></br> </br></br>
+	<div align="right">
+		<button id="continue" onclick="next()">Continue</button>
+	</div>
+</body>
+</html>
