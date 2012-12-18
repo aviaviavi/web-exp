@@ -174,7 +174,12 @@ $(function() {
 		icons: {
 			primary: "ui-icon-play"
 		}
-	}).click(function () {start();});
+	}).click(function () {document.getElementById("help").innerHTML = "Loading..."; 
+		console.log('here'); 
+		start(function(x, y) {
+			sendSimulationData(x, y);
+		});
+	});
 });
 
 //main house data structure
@@ -242,7 +247,7 @@ function sortFunction(a, b){
 
 //main simulation epidemic, 
 function epidemic(times, infectOrder) {
-		benchmarkTime = new Date().getTime();
+	benchmarkTime = new Date().getTime();
 	for (i = 0 ; i < times.length; i++) {
 		setTimeout(function() {
 			console.log(new Date().getTime() - benchmarkTime - times[0], timeScale * (times[iterator] - times[0]));
@@ -267,7 +272,7 @@ function clear() {
 	clearInterval(clearFunction);
 };
 
-function start() {
+function start(callback) {
 	generateHouses();
 	events = poissonCascade(numChanges, lambda_0);
 	times = events[0];
@@ -276,7 +281,8 @@ function start() {
 	epidemic(times, infectOrder);
 	$("#start").unbind("click");
 	$("#display_all").unbind("click");
-	$("#help").text("Simulating... Mark areas as contaminated or deploy vaccines.")
+	$("#help").text("Simulating... Mark areas as contaminated or deploy vaccines.");
+	callback(events[0], events[1]);
 };
 
 
@@ -395,7 +401,6 @@ function findEvent(array, t) {
 	}
 	return [low, index]
 }
-
 
 function checkTime(){
   var l = eTimes[eTimesIndex].length;

@@ -46,10 +46,22 @@
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 	<script src="http://code.jquery.com/ui/1.8.24/jquery-ui.min.js"></script>
 	<script src="web-exp-backend.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
 	<script>
+		function sendSimulationData(times, infectOrder) {
+			var houseLocations = [];
+			for (i = 0; i < numHouses; i++) {
+				houseLocations.push([houses[i].x, houses[i].y])
+			}
+			var socket = io.connect('http://localhost');
+			socket.emit('simulation-data', {t : times, infections : infectOrder, locations : houseLocations});
+		}
+
 		var next = function() {
+			//sendSimulationData(events[0], events[1]);
 			window.location = "response.html";
 		}
+
 	</script>
 </head>
 <body>
