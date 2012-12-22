@@ -175,7 +175,6 @@ $(function() {
 			primary: "ui-icon-play"
 		}
 	}).click(function () {document.getElementById("help").innerHTML = "Loading..."; 
-		console.log('here'); 
 		start(function(x, y) {
 			sendSimulationData(x, y);
 		});
@@ -252,8 +251,12 @@ function epidemic(times, infectOrder) {
 		setTimeout(function() {
 			console.log(new Date().getTime() - benchmarkTime - times[0], timeScale * (times[iterator] - times[0]));
 			houses[infectOrder[iterator]].infect(times[iterator]); 
-			iterator++;}, 
-				timeScale * (times[i] - times[0]));
+			iterator++;
+			if (iterator === numChanges) {
+				document.getElementById("help").innerHTML = "Simulation Complete";
+			}
+		}, 
+			timeScale * (times[i] - times[0]));
 	}
 }
 
@@ -400,28 +403,4 @@ function findEvent(array, t) {
 		} 
 	}
 	return [low, index]
-}
-
-function checkTime(){
-  var l = eTimes[eTimesIndex].length;
-  var s = eTimes[eTimesIndex];
-  if(elapsed===dTimes[dTimesIndex]){
-  document.getElementById('indicator').src=onFigVal;
-  setTimeout("document.getElementById('indicator').src='indOff.jpg';",300);
-  dTimesIndex++;
-  }
-  for (var i=0;i<l;i++){
-  if(elapsed===s[i]){
-  indexHolder.push(lightOrderIndex);
-  light(lightOrder[lightOrderIndex]);
-  setTimeout("lightOff()",80);
-  if (i===0){eTimesIndex++;}
-  lightOrderIndex++;
-  }
-  }
-  if(elapsed>=max_time){
-  goTo('exp','interim1');
-  dsc.push(Math.round(100*tracker.sum()/tracker.length)/100);
-// alert(dsc);
-  }
 }

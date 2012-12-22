@@ -4,6 +4,7 @@
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" />
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 	<script src="http://code.jquery.com/ui/1.8.24/jquery-ui.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
 	<script>
     $(function() {
         $( "#slider" ).slider({min:0, max:100, width:200, slide: function( event, ui ) {
@@ -20,7 +21,13 @@
             } });
     });
 
-    var submit = function() {console.log("submit " + document.getElementById("slider").value);}
+    function submit () {
+    	document.getElementById('sbutton').innerHTML = "Sending Data..."
+    	var socket = io.connect('http://192.168.1.5');
+    	console.log("submit " + document.getElementById("slider").value);
+		socket.emit('response-data', {response : document.getElementById("slider").value});
+		setTimeout(function() {window.location = 'thankyou.html';}, 1000);
+	}
 
 
     </script>
