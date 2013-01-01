@@ -1,0 +1,14 @@
+CREATE TABLE response (
+
+	subject_addr VARCHAR(20) NOT NULL PRIMARY KEY,
+	response SMALLINT
+
+);
+
+CREATE TABLE data (
+
+	subject_addr VARCHAR(20) NOT NULL PRIMARY KEY,
+	data TEXT,
+	FOREIGN KEY (subject_addr) REFERENCES response(subject_addr)  
+
+);

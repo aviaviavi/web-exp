@@ -23,7 +23,7 @@
 
     function submit () {
     	document.getElementById('sbutton').innerHTML = "Sending Data..."
-    	var socket = io.connect('http://192.168.1.5');
+    	var socket = io.connect('localhost');
     	console.log("submit " + document.getElementById("slider").value);
 		socket.emit('response-data', {response : document.getElementById("slider").value});
 		setTimeout(function() {window.location = 'thankyou.html';}, 1000);
