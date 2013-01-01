@@ -53,7 +53,7 @@
 			for (i = 0; i < numHouses; i++) {
 				houseLocations.push([houses[i].x, houses[i].y])
 			}
-			var socket = io.connect('localhost');
+			var socket = io.connect('http://192.168.3.184'); //my local ip at this very moment
 			socket.emit('simulation-data', {t : times, infections : infectOrder, locations : houseLocations});
 		}
 
