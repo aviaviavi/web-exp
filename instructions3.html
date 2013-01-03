@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<h1 style="text-align:center">Instructions</h1>
+	<style>
+		.box {
+			width: 400px;
+			height: 400px;
+			border: 2px solid gray;
+			border-radius: 7px;
+		}
+	</style>
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+	<script type="text/javascript">
+		var enabled = true;
+		function next() {
+			window.location = "instructions4.html";
+		}
+		function showExample() {
+			if (enabled) {
+				$("#example_house").fadeOut(function() {
+					$(this).attr("src", "icons/53-house-infected.png"); 
+					$(this).load(function() { $(this).fadeIn(); }); 
+				});
+				enabled = false;
+			}
+		}
+	</script>
+</head>
+<body>
+	<div style="padding:15px; align:center; margin-right:auto; margin-left:auto; width:75%; height:500px; border:1px solid gray">	
+		
+		<p>If a house in the simulation turns red, that means someone in that family became sick. Click the
+			infect button to see the infection animation.
+		</p>
+
+		<div align="center" class="box">
+			<img id="example_house" src="icons/53-house.png" style="padding-right:90px; padding-top:110px">
+		</div>
+			<button id="demo_button" type="button" style="margin-left:170px" onclick="showExample()">Infect!</button>
+
+	</div>
+
+	<div align="right">
+		<button id="continue" onclick="next()">Continue</button>
+	</div>
+</body>
+</html>
+
+
+
+

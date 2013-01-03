@@ -306,7 +306,7 @@ function start(callback) {
 	epidemic(times, infectOrder);
 	$("#start").unbind("click");
 	$("#display_all").unbind("click");
-	$("#help").text("Simulating... Mark areas as contaminated or deploy vaccines.");
+	$("#help").text("Simulating...");
 	callback(events[0], events[1]);
 };
 
