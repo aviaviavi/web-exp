@@ -16,6 +16,7 @@ var timeScale = 200.0,
 
 var events = [];
 var benchmarkTime = 0;
+var simulationComplete = false;
 //the fact that this is necessary is a huge flaw in js
 var iterator = 0;
 
@@ -179,6 +180,14 @@ $(function() {
 			sendSimulationData(x, y);
 		});
 	});
+
+	//see it again button
+	$("#redo").button({
+		text: false,
+		icons: {
+			primary: "ui-icon-refresh"
+		}
+	}).click(function() {seeItAgain();});
 });
 
 //main house data structure
@@ -246,6 +255,8 @@ function sortFunction(a, b){
 
 //main simulation epidemic, 
 function epidemic(times, infectOrder) {
+	iterator = 0;
+	simulationComplete = false;
 	benchmarkTime = new Date().getTime();
 	for (i = 0 ; i < times.length; i++) {
 		setTimeout(function() {
@@ -254,9 +265,20 @@ function epidemic(times, infectOrder) {
 			iterator++;
 			if (iterator === numChanges) {
 				document.getElementById("help").innerHTML = "Simulation Complete";
+				simulationComplete = true;
 			}
 		}, 
 			timeScale * (times[i] - times[0]));
+	}
+}
+
+function seeItAgain() {
+	if (simulationComplete) {
+		for (i = 0; i < numHouses; i++) {
+			houses[i].infected = false;
+			$("#house" + i +"img").attr("src", "icons/53-house.png");
+		} 
+		epidemic(events[0], events[1]);
 	}
 }
 
