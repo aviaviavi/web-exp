@@ -12,3 +12,13 @@ CREATE TABLE data (
 	FOREIGN KEY (subject_addr) REFERENCES response(subject_addr)  
 
 );
+
+data - a json string contaning:
+	{
+		t : [a chronological list of times when infections occured] // i think the ogata code needs these to be date
+		 																objects, which sounds like an annoying 
+		 																difference
+		infectionOrder : [an in order list of the house numbers infected. a subset of the houses]
+
+		locations: [item at locations[i] is the coordinate [x, y] for the ith house]
+	}
