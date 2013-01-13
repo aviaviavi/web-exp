@@ -15,10 +15,18 @@ CREATE TABLE data (
 
 data - a json string contaning:
 	{
-		t : [a chronological list of times when infections occured] // i think the ogata code needs these to be date
-		 																objects, which sounds like an annoying 
-		 																difference
+		t : [a chronological list of times when infections occured] // i think the ogata code needs these to be date objects, which sounds like an annoying difference
+
+		 	ex. t : [1.1, 1.5, 4.5, 4.6, 4.7, 5.1 ...]
+
 		infectionOrder : [an in order list of the house numbers infected. a subset of the houses]
 
+			ex. infectionOrder: [15, 1, 3, 9, 4, 7, 11, ...]
+			any house not in this list was not infected during this trial.
+			in this list, house 1 was the 2nd house to be infected.
+
 		locations: [item at locations[i] is the coordinate [x, y] for the ith house]
+
+			ex. [[28, 19], [160, 10], [89, 192], ...]
+			house1 is located at [28, 19], house2 is at [160, 10], etc.
 	}
