@@ -29,28 +29,30 @@
 
 </head>
 <body>
-	<div style="padding:15px; align:center; margin-right:auto; margin-left:auto; width:75%; height:500px; border:1px solid gray">	
-		
-		<p>Your job is to watch each video and decide whether the disease in question is contagious or genetic. 
-		You will rate how confident you are on a scale from 0 to 100, where 0 means that you are confident the
-		disease is not contagious, it is genetic and 100 means that you are confident that the disease is 
-		contagious, not genetic.
-		</p></br></br>
+	<div align="center"
+		<div style="padding:15px; align:center; margin-right:auto; margin-left:auto; width:75%; height:500px; border:1px solid gray">	
+			
+			<p>Your job is to watch each video and decide whether the disease in question is contagious or genetic. 
+			You will rate how confident you are on a scale from 0 to 100, where 0 means that you are confident the
+			disease is not contagious, it is genetic and 100 means that you are confident that the disease is 
+			contagious, not genetic.
+			</p></br></br>
 
-		<table cellspacing="20" cellpadding="20">
-			<tr>
-				<td style="text-align:right"><span id="genetic">Genetic</span></td>
-				<td><div id="slider" style="width:200px"></div></td>
-				<td style="text-align:left"><span id="contagious"> Contagious</span></td>
-			</tr>
-		</table></br></br>
+			<table cellspacing="20" cellpadding="20">
+				<tr>
+					<td style="text-align:right"><span id="genetic">Genetic</span></td>
+					<td><div id="slider" style="width:200px"></div></td>
+					<td style="text-align:left"><span id="contagious"> Contagious</span></td>
+				</tr>
+			</table></br></br>
 
-		<p id="confidence" style="display:none; padding-left:200px">Confidence = 0</p>
+			<p id="confidence" style="display:none">Confidence = 0</p>
 
-	</div>
+		</div>
 
-	<div align="right">
-		<button id="continue" onclick="next()">Continue</button>
+		<div align="right">
+			<button id="continue" onclick="next()">Continue</button>
+		</div>
 	</div>
 </body>
 </html>
