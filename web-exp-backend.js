@@ -1,5 +1,5 @@
-var numHouses = 30, 
-	numChanges = 15, 
+var numHouses = 3000, 
+	numChanges = 1500, 
 	changeInterval = 500,
 	timeStep = 0,
 	boxSize = 400,
@@ -379,6 +379,7 @@ function poissonCascade(maxEvents, lambda_0) {
 		//thinning stuff would probably take place here
 		//just dont push the event unless it passes some random thinning check
 		output.push(t);
+		console.log(output.length + 'th t =' + t);
 		infectionOrderOutput.push(lastInfected);
 		//add a new process to t_lambda_n
 		t_lambda_p = poissonNH(lambdaExpDecay, numChanges, t);
